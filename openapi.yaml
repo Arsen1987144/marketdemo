@@ -1,0 +1,139 @@
+openapi: 3.0.3
+info:
+  title: MarketDemo API
+  description: >-
+    OpenAPI спецификация минимального набора эндпоинтов демо‑маркетплейса. В
+    дальнейшем этот файл может быть дополнен другими сервисами (платежи,
+    доставка, отзывы и т. д.).
+  version: "1.0.0"
+servers:
+  - url: http://localhost:4000/api
+paths:
+  /catalog/categories:
+    get:
+      summary: Получить список категорий
+      operationId: getCategories
+      tags: [Catalog]
+      responses:
+        '200':
+          description: Список категорий
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+  /catalog/products:
+    get:
+      summary: Получить список товаров
+      operationId: getProducts
+      tags: [Catalog]
+      parameters:
+        - name: categoryId
+          in: query
+          required: false
+          description: ID категории для фильтрации
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Список товаров
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+  /catalog/products/{sku}:
+    get:
+      summary: Получить товар по SKU
+      operationId: getProductBySku
+      tags: [Catalog]
+      parameters:
+        - name: sku
+          in: path
+          required: true
+          description: Артикул товара
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Карточка товара
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: Товар не найден
+
+components:
+  schemas:
+    Category:
+      type: object
+      properties:
+        id:
+          type: string
+          example: cat1
+        name:
+          type: string
+          example: Одежда
+        parentId:
+          type: string
+          nullable: true
+    ProductVariant:
+      type: object
+      properties:
+        id:
+          type: string
+          example: SKU-0001-1
+        color:
+          type: string
+          nullable: true
+          example: Белый
+        size:
+          type: string
+          nullable: true
+          example: M
+        barcode:
+          type: string
+          example: '1234567890123'
+        stockByWarehouse:
+          type: object
+          additionalProperties:
+            type: integer
+          example: { MSK_FBO_1: 10, SPB_FBO_1: 5 }
+    Product:
+      type: object
+      properties:
+        sku:
+          type: string
+          example: SKU-0001
+        categoryId:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+          format: float
+        oldPrice:
+          type: number
+          format: float
+          nullable: true
+        discount:
+          type: number
+          format: float
+          nullable: true
+        rating:
+          type: number
+          format: float
+          nullable: true
+        images:
+          type: array
+          items:
+            type: string
+        variants:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductVariant'

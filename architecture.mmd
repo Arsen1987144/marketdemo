@@ -1,0 +1,28 @@
+%% Mermaid diagram: high‑level architecture of MarketDemo
+flowchart TD
+    subgraph Clients
+      B[Buyer Frontend] -->|HTTP/API| API
+      S[Seller Portal] -->|HTTP/API| API
+      A[Admin Panel] -->|HTTP/API| API
+      M[Mobile/PWA] -->|HTTP/API| API
+    end
+
+    subgraph Backend
+      API[NestJS API Gateway] --> CatalogService
+      API --> OrdersService
+      API --> PaymentsService
+      API --> DeliveryService
+      API --> ReviewsService
+      API --> UsersService
+    end
+
+    CatalogService -->|SQL| Postgres[(PostgreSQL)]
+    OrdersService -->|SQL| Postgres
+    PaymentsService -->|SQL| Postgres
+    ReviewsService -->|SQL| Postgres
+    UsersService -->|Redis / JWT| RedisCache[(Redis)]
+    CatalogService -->|Search index| Elastic[(Elasticsearch)]
+    subgraph External Integrations
+      PaymentsService -->|Sandbox API| PaymentsProvider[(Payments Sandbox)]
+      DeliveryService -->|Mock API| DeliveryProvider[(Delivery Provider Mock)]
+    end

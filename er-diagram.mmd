@@ -1,0 +1,33 @@
+erDiagram
+    categories ||--o{ products : contains
+    products ||--o{ product_variants : has
+    product_variants ||--o{ variant_stock : stocked_in
+
+    categories {
+        varchar id PK
+        varchar name
+        varchar parent_id FK
+    }
+    products {
+        varchar sku PK
+        varchar category_id FK
+        varchar name
+        text description
+        numeric price
+        numeric old_price
+        numeric discount
+        numeric rating
+    }
+    product_variants {
+        varchar id PK
+        varchar product_sku FK
+        varchar color
+        varchar size
+        varchar barcode
+    }
+    variant_stock {
+        varchar variant_id FK
+        varchar warehouse
+        int stock
+        primaryKey variant_id, warehouse
+    }
